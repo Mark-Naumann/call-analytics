@@ -53,6 +53,41 @@ class TestToolErrors(unittest.TestCase):
             self.assertFalse(fc.is_tool_error(result), result)
 
 
+class TestTransferToolIsNotAnError(unittest.TestCase):
+    """Shaped like a real call (Jordan, ended "assistant-forwarded-call"): Vapi sends
+    back "Transfer initiated." as the transfer tool's result. That is a success."""
+
+    def transfer_call(self, result_text):
+        return {
+            "id": "call-transfer", "assistantId": "asst-jordan", "endedReason": "assistant-forwarded-call",
+            "artifact": {"messages": [
+                {"role": "tool_calls", "secondsFromStart": 40.0, "toolCalls": [
+                    {"id": "tc-transfer", "type": "function",
+                     "function": {"name": "transfer_to_person", "arguments": {}}}]},
+                {"role": "tool_call_result", "toolCallId": "tc-transfer", "name": "transfer_to_person",
+                 "result": result_text, "secondsFromStart": 41.0},
+            ]},
+        }
+
+    def saved_tool_call(self, call):
+        """Save the call into a fresh in-memory database; return (is_error, was_transferred)."""
+        import sqlite3, os
+        conn = sqlite3.connect(":memory:")
+        self.addCleanup(conn.close)
+        with open(os.path.join(os.path.dirname(fc.__file__), "schema.sql")) as f:
+            conn.executescript(f.read())
+        fc.save_calls(conn, [call], {"asst-jordan": "Jordan"})
+        return conn.execute("SELECT t.is_error, c.was_transferred FROM tool_calls t "
+                            "JOIN calls c ON c.id = t.call_id").fetchone()
+
+    def test_successful_transfer_counts_as_transfer_not_tool_error(self):
+        self.assertFalse(fc.is_tool_error("Transfer initiated."))
+        self.assertEqual(self.saved_tool_call(self.transfer_call("Transfer initiated.")), (0, 1))
+
+    def test_failed_transfer_still_counts_as_tool_error(self):
+        self.assertEqual(self.saved_tool_call(self.transfer_call("Error: transfer failed")), (1, 1))
+
+
 class TestTransfers(unittest.TestCase):
     def test_three_signs_of_a_transfer(self):
         self.assertTrue(fc.was_transferred({"artifact": {"transfers": [{"status": "completed"}]}}))

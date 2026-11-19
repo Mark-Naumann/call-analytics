@@ -97,11 +97,11 @@ sqlite3 calls.db "SELECT ended_reason, COUNT(*) FROM calls GROUP BY ended_reason
 python3 -m unittest
 ```
 
-38 tests, no network needed:
+40 tests, no network needed:
 
 | File | Checks |
 |---|---|
-| `tests/test_rules.py` | Phone/email masking (all formats), personal-field hiding, what counts as a tool error, transfer detection, score parsing, issue splitting, timing units |
+| `tests/test_rules.py` | Phone/email masking (all formats), personal-field hiding, what counts as a tool error (a successful transfer is not one), transfer detection, score parsing, issue splitting, timing units |
 | `tests/test_database.py` | Every table is filled correctly from the sample calls; re-running doesn't duplicate; **no personal info anywhere in the database** |
 | `tests/test_reports.py` | Every query in `reports.sql` returns the numbers worked out by hand; the printed report has every section |
 | `tests/test_read_only.py` | Every request to Vapi is a GET; paging works; the code has only one way to contact Vapi |
