@@ -1,0 +1,148 @@
+[
+  {
+    "id": "call-1",
+    "assistantId": "asst-jordan",
+    "type": "webCall",
+    "createdAt": "2026-01-05T10:00:00.000Z",
+    "startedAt": "2026-01-05T10:00:00.000Z",
+    "endedAt": "2026-01-05T10:02:00.000Z",
+    "endedReason": "customer-ended-call",
+    "cost": 0.2,
+    "costs": [
+      { "type": "model", "cost": 0.05 },
+      { "type": "voice", "cost": 0.1 },
+      { "type": "transcriber", "cost": 0.05 }
+    ],
+    "artifact": {
+      "messages": [
+        { "role": "system", "message": "You are a test agent.", "time": 1000, "secondsFromStart": 0 },
+        { "role": "bot", "assistantName": "Jordan - Test Transit", "message": "Hi, this is Jordan. How can I help?", "time": 1500, "endTime": 3500, "duration": 2000, "secondsFromStart": 0.5 },
+        { "role": "user", "message": "When is the next bus at the library?", "time": 4000, "endTime": 5500, "duration": 1500, "secondsFromStart": 3.0 },
+        { "role": "tool_calls", "time": 6000, "secondsFromStart": 5.0, "toolCalls": [
+          { "id": "tc-1", "type": "function", "function": { "name": "get_next_bus", "arguments": { "stop": "library" } } }
+        ] },
+        { "role": "tool_call_result", "name": "get_next_bus", "toolCallId": "tc-1", "result": "The next Route 2 bus reaches Main Library in 6 minutes.", "time": 7000, "secondsFromStart": 6.0 },
+        { "role": "bot", "assistantName": "Jordan - Test Transit", "message": "The next Route 2 bus comes in 6 minutes.", "time": 10000, "endTime": 12000, "duration": 2000, "secondsFromStart": 9.0 },
+        { "role": "user", "message": "Thanks.", "time": 16500, "endTime": 17500, "duration": 1000, "secondsFromStart": 15.5 },
+        { "role": "bot", "assistantName": "Jordan - Test Transit", "message": "You're welcome, bye!", "time": 18000, "endTime": 19000, "duration": 1000, "secondsFromStart": 17.0 }
+      ],
+      "structuredOutputs": {
+        "so-quality": {
+          "name": "call quality review",
+          "result": {
+            "overall_score": "8/10",
+            "caller_goal_met": "Yes",
+            "caller_sentiment": "positive",
+            "one_question_per_turn": "No",
+            "accuracy": "accurate",
+            "remembered_context": "yes",
+            "issues_found": "Asked two questions at once; long pause before answering",
+            "suggested_prompt_fix": "Ask one question per turn."
+          }
+        },
+        "so-transit": {
+          "name": "transit request",
+          "result": {
+            "summary": "Asked about the next bus.",
+            "request_type": "info",
+            "language": "English",
+            "rider_name": "Test Rider",
+            "callback_number": "not-a-real-number",
+            "pickup_address": "1 Test Street"
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "call-2",
+    "assistantId": "asst-jordan",
+    "type": "webCall",
+    "createdAt": "2026-01-05T11:00:00.000Z",
+    "startedAt": "2026-01-05T11:00:00.000Z",
+    "endedAt": "2026-01-05T11:01:00.000Z",
+    "endedReason": "assistant-forwarded-call",
+    "cost": 0.1,
+    "costs": [
+      { "type": "model", "cost": 0.04 },
+      { "type": "voice", "cost": 0.06 }
+    ],
+    "artifact": {
+      "messages": [
+        { "role": "bot", "assistantName": "Jordan - Test Transit", "message": "Hi, this is Jordan.", "time": 1000, "endTime": 2000, "duration": 1000, "secondsFromStart": 0.5 },
+        { "role": "user", "message": "How do I get to the hospital?", "time": 2500, "endTime": 4000, "duration": 1500, "secondsFromStart": 2.0 },
+        { "role": "tool_calls", "time": 4500, "secondsFromStart": 4.0, "toolCalls": [
+          { "id": "tc-2", "type": "function", "function": { "name": "get_next_bus", "arguments": "{\"stop\": \"hospital\"}" } },
+          { "id": "tc-3", "type": "function", "function": { "name": "get_next_bus", "arguments": "{\"stop\": \"mall\"}" } }
+        ] },
+        { "role": "tool_call_result", "name": "get_next_bus", "toolCallId": "tc-2", "result": "Error: request timed out", "time": 5000, "secondsFromStart": 4.5 },
+        { "role": "bot", "assistantName": "Jordan - Test Transit", "message": "Let me connect you with someone.", "time": 5500, "endTime": 7000, "duration": 1500, "secondsFromStart": 5.0 }
+      ],
+      "structuredOutputs": {
+        "so-quality": {
+          "name": "call quality review",
+          "result": {
+            "overall_score": "6",
+            "caller_goal_met": "No",
+            "caller_sentiment": "neutral",
+            "issues_found": "asked two questions at once, tool error",
+            "suggested_prompt_fix": "Explain the delay before transferring."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "call-3",
+    "assistantId": "asst-sam",
+    "type": "inboundPhoneCall",
+    "createdAt": "2026-01-06T09:00:00.000Z",
+    "startedAt": "2026-01-06T09:00:00.000Z",
+    "endedAt": "2026-01-06T09:03:00.000Z",
+    "endedReason": "customer-ended-call",
+    "cost": 0.3,
+    "costs": [
+      { "type": "model", "cost": 0.1 },
+      { "type": "voice", "cost": 0.2 }
+    ],
+    "artifact": {
+      "messages": [
+        { "role": "bot", "assistantName": "Sam - Test Painting", "message": "Thanks for calling, this is Sam.", "time": 1000, "endTime": 3000, "duration": 2000, "secondsFromStart": 0.5 },
+        { "role": "user", "message": "I need my kitchen painted.", "time": 3500, "endTime": 5000, "duration": 1500, "secondsFromStart": 3.0 },
+        { "role": "bot", "assistantName": "Sam - Test Painting", "message": "Sure, what town are you in?", "time": 5500, "endTime": 7000, "duration": 1500, "secondsFromStart": 5.0 }
+      ],
+      "structuredOutputs": {
+        "so-quality": {
+          "name": "call quality review",
+          "result": { "overall_score": "Score: 10", "caller_goal_met": "Yes - lead taken", "issues_found": "None" }
+        },
+        "so-lead": {
+          "name": "painting lead",
+          "result": { "caller_name": "Test Caller", "project_type": "interior", "is_urgent": true, "best_callback_time\t": "mornings" }
+        }
+      }
+    }
+  },
+  {
+    "id": "call-4",
+    "assistantId": "asst-sam",
+    "type": "inboundPhoneCall",
+    "createdAt": "2026-01-06T10:00:00.000Z",
+    "startedAt": "2026-01-06T10:00:00.000Z",
+    "endedAt": "2026-01-06T10:04:00.000Z",
+    "endedReason": "customer-ended-call",
+    "cost": 0.4,
+    "costs": [
+      { "type": "voice", "cost": 0.4 }
+    ],
+    "customer": { "number": "fake-caller-number-should-never-be-saved" },
+    "recordingUrl": "https://example.invalid/fake-audio-should-never-be-saved.wav",
+    "artifact": {
+      "recordingUrl": "https://example.invalid/fake-audio-should-never-be-saved.wav",
+      "messages": [
+        { "role": "bot", "assistantName": "Sam - Test Painting", "message": "Thanks for calling, this is Sam.", "time": 1000, "endTime": 3000, "duration": 2000, "secondsFromStart": 0.5 },
+        { "role": "user", "message": "Just checking your hours.", "time": 3200, "endTime": 4500, "duration": 1300, "secondsFromStart": 2.7 }
+      ]
+    }
+  }
+]
