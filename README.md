@@ -27,7 +27,7 @@ signals I'd watch in production, and what I'd do when one moves:
 | **Where the money goes** | Cost split: Vapi platform, voice, model, transcriber | Spend tuning effort where the money is |
 | **Most common issues** | The reviewer's `issues_found`, counted | The top issue is the next prompt fix |
 
-### First findings (my test calls, Nov 18–19)
+### First findings (my test calls, Nov 17–18, Mountain Time)
 
 - 27 calls: 19 for Sam, 8 for Jordan; about 1 minute each, **$0.08–0.09 per minute**.
 - **Over half the cost (55%) is the Vapi platform fee**, then voice (24%). The LLM is
