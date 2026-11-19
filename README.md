@@ -4,8 +4,10 @@
 SQLite database and answers the questions an operator asks every morning: are the agents
 busy, are they good, are they breaking, and what do they cost?**
 
-Built for my two demo agents, Sam (Naumann Painting receptionist) and Jordan (Juniper
-Valley Transit customer service), but nothing in it is specific to them.
+Built for my two demo agents, Sam v14 (Naumann Painting receptionist) and Jordan v10
+(Juniper Valley Transit customer service), but nothing in it is specific to them.
+
+🎬 **Demo video:** coming soon
 
 ---
 
@@ -27,14 +29,18 @@ signals I'd watch in production, and what I'd do when one moves:
 
 ### First findings (my test calls, Nov 18–19)
 
-- 23 calls: 18 for Sam, 5 for Jordan; about 1 minute each, **$0.08–0.10 per minute**.
-- **Over half the cost (54%) is the Vapi platform fee**, then voice (27%). The LLM is
-  under 10%, so a cheaper model would barely change the bill.
-- Dead air is mostly **caller_quiet** (18 of 20 long gaps), the caller thinking or
+- 27 calls: 19 for Sam, 8 for Jordan; about 1 minute each, **$0.08–0.09 per minute**.
+- **Over half the cost (55%) is the Vapi platform fee**, then voice (24%). The LLM is
+  about 10%, so a cheaper model would barely change the bill.
+- Dead air is mostly **caller_quiet** (23 of 26 long gaps), the caller thinking or
   unsure what to say, rather than the agent being slow. That points to clearer
   questions, which is what the "one question per turn" prompt change targets.
-- Jordan's `get_next_bus` tool: 3 calls, 0 errors.
-- Quality scores start once calls include the new "call quality review" output.
+- Tools: `get_next_bus` 4 calls, `plan_trip` 1, `transfer_to_person` 1, **0 errors**.
+  Jordan's transfer rate is 12.5% (1 of 8 calls, a real transfer to a person). A
+  successful transfer returns "Transfer initiated." and is (correctly) not a tool error.
+- Quality reviews: the first 3 reviewed calls scored 8, 8 (Jordan) and 7 (Sam). The top
+  issue is **phone-number read-back**, which led to the Jordan v10 fix described in
+  [call-analyzer](https://github.com/Mark-Naumann/call-analyzer).
 
 ## How it works
 
@@ -117,8 +123,12 @@ python3 -m unittest
 - Real structured-output data can have untidy field names (one had a trailing tab), so
   field names are cleaned on the way in.
 
-## What I'd improve next
+## What I'd do next
 
+- **Fix issue counting:** the reviewer writes `issues_found` as long sentences, and
+  splitting them on commas breaks them into fragments, so "Most common issues" doesn't
+  group well yet. Better: have the reviewer pick from fixed labels (`phone_readback`,
+  `asked_two_questions`, …), which also keeps callers' names out of the issue text.
 - **Run it on a schedule** (e.g. every hour) and **alert** when a metric crosses a line:
   tool error rate > 5%, average score < 7, agent_slow gaps on > 10% of calls, or calls
   per hour dropping to zero during business hours.
@@ -129,3 +139,12 @@ python3 -m unittest
 - **A dashboard** on top of the same SQL (the queries don't change).
 - **Ask for a consistent score scale** (e.g. always 1–10) in the quality review prompt,
   so averages are comparable.
+
+## Related projects
+
+| Repo | What it is |
+|---|---|
+| [call-analyzer](https://github.com/Mark-Naumann/call-analyzer) | The "call quality review" these quality scores come from, with real findings |
+| [painting-agent](https://github.com/Mark-Naumann/painting-agent) | Sam, AI receptionist for a painting company (Vapi) |
+| [transit-agent](https://github.com/Mark-Naumann/transit-agent) | Jordan, AI customer service for a fictional transit agency (Vapi) |
+| [transit-sim](https://github.com/Mark-Naumann/transit-sim) | The simulated bus system and API Jordan's tools call |
